@@ -8,6 +8,7 @@ name = "pypi"
 [packages]
 Flask = "==0.12.2"
 flask = "*"
+gunicorn = "*"
 
 [requires]
 python_version = "3.6"
