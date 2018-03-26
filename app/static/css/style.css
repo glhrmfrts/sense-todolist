@@ -32,3 +32,23 @@ main .box {
 main .top-bar .bootstrap-select {
     width: 100% !important;
 }
+
+.task-item.completed {
+    opacity: 0.5;
+}
+
+.task-check.incomplete {
+    color: #aaa;
+}
+
+.task-check.incomplete:hover {
+    color: #555;
+}
+
+.task-check.completed {
+    color: #0d0;
+}
+
+.task-check.completed:hover {
+    color: #d00;
+}

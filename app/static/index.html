@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html ng-app="app">
   <head>
     <title>Sense TodoList</title>
 
@@ -9,6 +9,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css">
 
     <link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-wvfXpqpZZVQGK6TAh5PVlGOfQNHSoD2xbE+QkPxCAFlNEevoEH3Sl0sibVcOQVnN" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
     <link rel="stylesheet" href="static/css/style.css">
   </head>
@@ -41,30 +43,18 @@
                   </button>
                 </div>
 
-                <div class="col-sm-2 text-right">
-                  Sort by:
-                </div>
-                <div class="col-sm-3">
-                  <select class="selectpicker">
-                    <option value="due_date:desc">Due date &dArr;</option>
-                    <option value="due_date:asc">Due date &uArr;</option>
-                    <option value="created_at:desc">Created &dArr;</option>
-                    <option value="created_at:asc">Created &uArr;</option>
-                  </select>
-                </div>
-
-                <div class="col-sm-1 text-right">
+                <div class="col-sm-1 offset-sm-5 text-right">
                   View:
                 </div>
                 <div class="col-sm-3">
-                  <select class="selectpicker" multiple>
+                  <select id="viewTaskState" class="selectpicker" multiple>
                     <option value="complete" selected>Complete</option>
                     <option value="incomplete" selected>Incomplete</option>
                   </select>
                 </div>
               </div>
 
-              <div class="row row-tasks">
+              <div class="row row-tasks" ng-controller="TaskListController">
                 <div class="col-sm-12">
                   <div class="section-title">
                     <h3>Tasks</h3>
@@ -73,47 +63,23 @@
                   <div class="section-body">
 
                     <ul class="list-group">
-                      <li class="list-group-item">
+
+                      <li ng-repeat="task in tasks" class="list-group-item task-item" ng-class="{'completed': task.completed, 'incomplete': !task.completed}">
                         <div class="row">
                           <div class="col-sm-1">
-                            <i class="fa fa-check-square"></i>
+                            <a href="#" class="task-check" ng-click="toggleTask(task)" ng-class="{'completed': task.completed, 'incomplete': !task.completed}">
+                              <i class="fa fa-check-square"></i>
+                            </a>
                           </div>
-                          <a href="#" class="col-sm-9">
-                            Finish the TodoList app
+                          <a href="#" class="col-sm-9" ng-click="editTask(task)">
+                            {{task.description}}
                           </a>
                           <div class="col-sm-2 text-right">
-                            Due: <font color="red">Today</font>
+                            Due: <font color="red">{{task.due_date | taskDate}}</font>
                           </div>
                         </div>
                       </li>
 
-                      <li class="list-group-item">
-                        <div class="row">
-                          <div class="col-sm-1">
-                            CHK
-                          </div>
-                          <a href="#" class="col-sm-9">
-                            Finish the TodoList app
-                          </a>
-                          <div class="col-sm-2 text-right">
-                            Today
-                          </div>
-                        </div>
-                      </li>
-
-                      <li class="list-group-item">
-                        <div class="row">
-                          <div class="col-sm-1">
-                            CHK
-                          </div>
-                          <a href="#" class="col-sm-9">
-                            Finish the TodoList app
-                          </a>
-                          <div class="col-sm-2 text-right">
-                            Today
-                          </div>
-                        </div>
-                      </li>
                     </ul>
 
                   </div>
@@ -130,65 +96,68 @@
     <footer>
     </footer>
 
-    <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="addTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" ng-controller="AddTaskController">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New task</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
+          <form ng-submit="submit()">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">New task</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
               <div class="form-group">
                 <label for="recipient-name" class="col-form-label">Description:</label>
-                <input type="text" class="form-control" id="recipient-name">
+                <input type="text" class="form-control" id="recipient-name" ng-model="task.description">
               </div>
               <div class="form-group">
                 <label for="message-text" class="col-form-label">Due date:</label>
-                <input type="text" class="form-control datepicker" id="due-date">
+                <input type="text" class="form-control datepicker" id="due-date" ng-model="task.due_date" readonly>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Add</button>
-          </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="submit" class="btn btn-primary">Add</button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
 
-    <div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal fade" id="editTaskModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" ng-controller="EditTaskController">
       <div class="modal-dialog" role="document">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">New message</h5>
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-              <span aria-hidden="true">&times;</span>
-            </button>
-          </div>
-          <div class="modal-body">
-            <form>
+
+          <form ng-submit="submit()">
+            <div class="modal-header">
+              <h5 class="modal-title" id="exampleModalLabel">Edit task: {{task.description}}</h5>
+              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
               <div class="form-group">
-                <label for="recipient-name" class="col-form-label">Recipient:</label>
-                <input type="text" class="form-control" id="recipient-name">
+                <label for="recipient-name" class="col-form-label">Description:</label>
+                <input type="text" class="form-control" id="recipient-name" ng-model="task.description">
               </div>
               <div class="form-group">
-                <label for="message-text" class="col-form-label">Message:</label>
-                <textarea class="form-control" id="message-text"></textarea>
+                <label for="message-text" class="col-form-label">Due date:</label>
+                <input type="text" class="form-control datepicker" id="due-date" ng-model="task.due_date" readonly>
               </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-primary">Send message</button>
-          </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-danger" data-dismiss="modal" ng-click="deleteTask()">Delete</button>
+              <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+          </form>
+
         </div>
       </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
@@ -198,9 +167,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/js/bootstrap-datepicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/locales/bootstrap-datepicker.pt-BR.min.js"></script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script src="static/js/app.js"></script>
+
     <script>
       $(document).ready(function() {
-        $('input.datepicker').datepicker({language: 'pt-BR'});
+      $('input.datepicker').datepicker({
+        language: 'pt-BR',
+        startDate: new Date().toISOString()
+      });
       });
     </script>
   </body>

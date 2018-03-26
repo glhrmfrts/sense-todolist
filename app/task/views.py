@@ -10,8 +10,9 @@ def get_list():
 
     query = Task.query
     if order is not None:
-        name, sort = order.split(':')
-        query = query.order_by(name + " " + sort)
+        for order_field in order.split(','):
+            name, sort = order_field.split(':')
+            query = query.order_by(name + " " + sort)
 
     if completed in ('false', 'true'):
         query = query.filter_by(completed=(completed == 'true'))
