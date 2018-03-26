@@ -9,6 +9,11 @@ name = "pypi"
 Flask = "==0.12.2"
 flask = "*"
 gunicorn = "*"
+flask-sqlalchemy = "*"
+flask-script = "*"
+flask-migrate = "*"
+sqlalchemy = "*"
+"psycopg2" = "*"
 
 [requires]
 python_version = "3.6"
